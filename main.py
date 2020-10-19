@@ -8,7 +8,7 @@ url = 'https://www.dhamma.org/en/schedules/schbhumi'
 lookup_location = 'Blackheath'
 lookup_dates = '27 Jan - 07 Feb' # test
 # lookup_dates = '09 Feb - 20 Feb'
-sleep_period = 10 # Time in seconds between pings
+sleep_period = 60 # Time in seconds between pings
 
 
 
@@ -57,15 +57,23 @@ if __name__ == '__main__':
     This is the main function. This gets executed when you run 'python main.py'
     '''
 
+    # Write a log entry when app starts
+    with open('log.txt', 'a') as f:
+        timestamp = datetime.now()
+        f.write("{} - Start\n".format(timestamp))
+
     # Get the first response from the website
     text = get_row_text(lookup_dates, lookup_location)
 
     # Loop forever
     while True:
+        log_entry = ''
+        
         # Sleep to avoid pinging the url too frequently
         time.sleep(sleep_period)
-        ping_timestamp = datetime.now()
+
         # Check the website again
+        ping_timestamp = datetime.now()
         new_text = get_row_text(lookup_dates, lookup_location)
         
         # Check if the application is open or not. Proxy for this is the text 'applications accepted starting...'
@@ -76,14 +84,16 @@ if __name__ == '__main__':
         
         # Check if the website has changed since the last time. This may be an indication that the applications are now open.
         if new_text == text:
-            print("{} - {} - Website hasn't changed".format(ping_timestamp, status))
+            log_entry += "{} - {} - Website hasn't changed\n".format(ping_timestamp, status)
         else:
-            print('\n\n\n----------------------------------\n')
-            print("{} - {} - Website has changed!!!!".format(ping_timestamp, status))
-            print(new_text)
             text = new_text
-            print('\n----------------------------------\n')
-            with open('log.txt', 'a') as f:
-                ping_timestamp = datetime.now()
-                f.write("{} - Website has changed!!!!\n".format(ping_timestamp))
+            log_entry += '\n\n\n----------------------------------\n'
+            log_entry += "{} - {} - Website has changed!!!!\n".format(ping_timestamp, status)
+            log_entry += new_text
+            log_entry += '\n----------------------------------\n'
+        
+        # Print log entry and write it to a log file
+        print(log_entry)
+        with open('log.txt', 'a') as f:
+            f.write(log_entry)
 
