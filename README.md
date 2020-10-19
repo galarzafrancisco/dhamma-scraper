@@ -12,7 +12,7 @@ Configured for the test date (27 Jan - 07 Feb). Dates can be changed on line 9 i
 git clone https://github.com/galarzafrancisco/dhamma-scraper.git
 ```
 
-### 2. Install requrements
+### 2. Install requirements
 ```
 python3 -m venv env
 source env/bin/activate
